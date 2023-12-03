@@ -5,17 +5,8 @@ pub fn calibration_sum(reader: impl BufRead) -> u32 {
         .lines()
         .map(|line| {
             let line = line.expect("failed to read line");
-            line.chars()
-                .filter_map(|c| c.to_digit(/*radix=*/ 10))
-                .nth(0)
-                .expect("line has no digit")
-                * 10
-                + line
-                    .chars()
-                    .rev()
-                    .filter_map(|c| c.to_digit(/*radix=*/ 10))
-                    .nth(0)
-                    .unwrap()
+            let digits = line.chars().filter_map(|c| c.to_digit(/*radix=*/ 10));
+            digits.clone().nth(0).expect("line has no digit") * 10 + digits.rev().nth(0).unwrap()
         })
         .sum()
 }
