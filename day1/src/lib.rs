@@ -86,26 +86,28 @@ pub fn calibration_sum_pt2_regex(reader: impl BufRead) -> u32 {
 }
 
 pub fn calibration_sum_pt2_aho_corasick(reader: impl BufRead) -> u32 {
-    reader.lines().map(|line| {
-        let line = line.expect("failed to read line");
-        // TODO: handrolled aho corasick to avoid reverse alloc?
-        let rev_line = line.chars().rev().collect::<String>();
-        (DIGITS_AHO
+    reader
+        .lines()
+        .map(|line| {
+            let line = line.expect("failed to read line");
+            // TODO: handrolled aho corasick to avoid reverse alloc?
+            let rev_line = line.chars().rev().collect::<String>();
+            (DIGITS_AHO
             .find_iter(&line)
             .nth(0)
             .expect("no digit in line")
-            .pattern()
-            .as_u32()
-            % 9
-            + 1)
-            * 10
-            + (REV_DIGITS_AHO
-                .find_iter(&rev_line)
-                .nth(0)
-                .unwrap()
-                .pattern()
-                .as_u32()
-                % 9
-                + 1)
-    }).sum()
+            .pattern() 
+            .as_u32() // pattern returns index of match in the initial array,
+            % 9 // so we can skip the hashing and derive based off of the index with some modulo magic.
+            + 1) * 10
+                + (REV_DIGITS_AHO
+                    .find_iter(&rev_line)
+                    .nth(0)
+                    .unwrap()
+                    .pattern()
+                    .as_u32()
+                    % 9
+                    + 1)
+        })
+        .sum()
 }
