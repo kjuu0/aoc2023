@@ -1,7 +1,7 @@
 use std::io;
 
-use day2::valid_game_sum;
+use day2::{valid_game_sum, game_power_sum};
 
 fn main() {
-    println!("{}", valid_game_sum(io::stdin().lock()));
+    println!("{}", game_power_sum(io::stdin().lock()));
 }

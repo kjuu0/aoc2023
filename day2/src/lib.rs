@@ -1,5 +1,7 @@
 use std::io::BufRead;
 
+/* part 1 */
+
 const RED: u32 = 12;
 const GREEN: u32 = 13;
 const BLUE: u32 = 14;
@@ -33,5 +35,34 @@ pub fn valid_game_sum(reader: impl BufRead) -> u32 {
                 None
             }
         })
+        .sum()
+}
+
+/* part 2 */
+pub fn game_power(game_str: &str) -> u32 {
+    let seq = &game_str[(game_str.find(':').expect("invalid game format") + 2)..];
+    seq.split(&[';', ','])
+        .fold([0; 3], |mut acc, mut pull| {
+            if pull.as_bytes()[0] == b' ' {
+                pull = &pull[1..];
+            }
+            let (num, color) = pull.split_at(pull.find(' ').expect("invalid game format"));
+            let hash = match &color[1..] {
+                "red" => 0,
+                "green" => 1,
+                "blue" => 2,
+                _ => panic!("invalid game format"),
+            };
+            acc[hash] = acc[hash].max(num.parse::<u32>().unwrap());
+            acc
+        })
+        .into_iter()
+        .product()
+}
+
+pub fn game_power_sum(reader: impl BufRead) -> u32 {
+    reader
+        .lines()
+        .map(|line| game_power(&line.expect("failed to read line")))
         .sum()
 }
