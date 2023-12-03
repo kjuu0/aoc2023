@@ -12,7 +12,6 @@ pub fn is_valid_game(game_str: &str) -> bool {
         }
         pull.as_bytes()[1] == b' ' // Single digit case
             || (pull.as_bytes()[2] == b' ' // Double digit case
-                // TODO: can maybe avoid a full parse by just checking first digit == 1 and just compare second digit char
                 && pull[0..2].parse::<u32>().expect("invalid game format") 
                 <= match &pull[3..] {
                     "red" => RED,
