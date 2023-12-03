@@ -157,6 +157,7 @@ dependencies = [
 name = "day1"
 version = "0.1.0"
 dependencies = [
+ "aho-corasick",
  "criterion",
  "lazy_static",
  "phf",
