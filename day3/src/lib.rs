@@ -5,7 +5,6 @@ pub fn parts_sum(reader: impl BufRead) -> u32 {
     let mut sum = 0;
     let mut prev_symbols = vec![];
     let mut cur_symbols = vec![];
-    let mut next_symbols = vec![];
     let mut cur = "".to_string();
     let mut cur_intervals = vec![];
 
@@ -29,11 +28,9 @@ pub fn parts_sum(reader: impl BufRead) -> u32 {
         s
     };
     for line in reader.lines() {
-        prev_symbols = cur_symbols;
-        cur_symbols = next_symbols;
-        next_symbols = vec![];
         let line = line.expect("failed to read string");
         let mut next_intervals = vec![];
+        let mut next_symbols = vec![];
         let mut start = None;
         for (i, c) in line.char_indices() {
             if c.is_digit(/*radix=*/ 10) {
@@ -55,6 +52,8 @@ pub fn parts_sum(reader: impl BufRead) -> u32 {
         }
         
         sum += compute_line_sum(&prev_symbols, &cur_symbols, &next_symbols, &cur, &cur_intervals);
+        prev_symbols = cur_symbols;
+        cur_symbols = next_symbols;
         cur = line;
         cur_intervals = next_intervals;
     }

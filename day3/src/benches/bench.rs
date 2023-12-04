@@ -6,7 +6,7 @@ use std::{
 use criterion::{criterion_group, criterion_main, Criterion};
 use day3::parts_sum;
 
-// time:   [132.34 µs 132.77 µs 133.20 µs]
+// time:   [122.17 µs 122.69 µs 123.39 µs]
 pub fn pt1_benchmark(c: &mut Criterion) {
     c.bench_function("parts_sum official input", |b| {
         b.iter_batched_ref(
