@@ -1,7 +1,7 @@
 use std::io;
 
-use day3::parts_sum;
+use day3::{parts_sum, gear_ratio_sum};
 
 fn main() {
-    println!("{}", parts_sum(io::stdin().lock()));
+    println!("{}", gear_ratio_sum(io::stdin().lock()));
 }
