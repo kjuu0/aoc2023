@@ -4,18 +4,29 @@ use std::{
 };
 
 use criterion::{criterion_group, criterion_main, Criterion};
-use day4::card_points_sum;
+use day4::{card_points_hashset_sum, card_points_linear_search_sum};
 
 // time:   [354.53 µs 360.42 µs 366.93 µs]
-pub fn pt1_benchmark(c: &mut Criterion) {
-    c.bench_function("card_points_sum official input", |b| {
+pub fn pt1_hashset_benchmark(c: &mut Criterion) {
+    c.bench_function("card_points_hashset_sum official input", |b| {
         b.iter_batched_ref(
             || BufReader::new(File::open("src/benches/input.txt").unwrap()),
-            |reader| assert_eq!(card_points_sum(reader), 20107),
+            |reader| assert_eq!(card_points_hashset_sum(reader), 20107),
             criterion::BatchSize::SmallInput,
         );
     });
 }
 
-criterion_group!(benches, pt1_benchmark);
+// time:   [157.55 µs 157.97 µs 158.37 µs]
+pub fn pt1_linear_benchmark(c: &mut Criterion) {
+    c.bench_function("card_points_linear_search_sum official input", |b| {
+        b.iter_batched_ref(
+            || BufReader::new(File::open("src/benches/input.txt").unwrap()),
+            |reader| assert_eq!(card_points_linear_search_sum(reader), 20107),
+            criterion::BatchSize::SmallInput,
+        );
+    });
+}
+
+criterion_group!(benches, pt1_hashset_benchmark, pt1_linear_benchmark);
 criterion_main!(benches);
