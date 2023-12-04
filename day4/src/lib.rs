@@ -63,8 +63,20 @@ pub fn card_points_linear_search_sum(reader: impl BufRead) -> u32 {
         .sum()
 }
 
-// TODO: compare with "easy" array solution
-pub fn scratchcards_sum(reader: impl BufRead) -> u32 {
+pub fn scratchcards_sim_sum(reader: impl BufRead) -> u32 {
+    let lines = reader.lines().flat_map(|x| x).collect::<Vec<String>>();
+    let mut res = vec![1; lines.len()];
+    let mut sum = 0;
+    for (i, line) in lines.iter().enumerate() {
+        let matches = num_matches_linear_search(line);
+        let incr = res[i];
+        res.iter_mut().skip(i + 1).take(matches as usize).for_each(|x| *x += incr);
+        sum += incr;
+    }
+    sum
+}
+
+pub fn scratchcards_interval_sum(reader: impl BufRead) -> u32 {
     let mut multipliers = BTreeMap::new();
     let mut mul = 1;
     let mut sum = 0;
