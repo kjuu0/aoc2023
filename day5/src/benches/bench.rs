@@ -26,7 +26,7 @@ pub fn pt2_brute_benchmark() {
     */
 }
 
-// 1.3 billion times faster :skull:
+// 1300 times faster :skull:
 // time:   [67.844 ms 68.339 ms 68.923 ms]
 pub fn pt2_rev_benchmark(c: &mut Criterion) {
     c.bench_function(
