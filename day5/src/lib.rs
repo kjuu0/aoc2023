@@ -75,3 +75,17 @@ pub fn compute_lowest_location(reader: impl BufRead) -> u32 {
         .min()
         .unwrap()
 }
+
+pub fn compute_lowest_location_seed_range(reader: impl BufRead) -> u32 {
+    let (seeds, maps) = parse_seeds_and_construct_maps(reader);
+    seeds
+        .chunks(2)
+        .map(|chnk| {
+            (chnk[0]..(chnk[0] + chnk[1]))
+                .map(|seed| compute_loc(&maps, seed))
+                .min()
+                .unwrap()
+        })
+        .min()
+        .unwrap()
+}
