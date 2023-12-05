@@ -31,7 +31,7 @@ pub fn compute_loc(maps: &[Map], seed: u32) -> u32 {
     maps.iter().fold(seed, |src, map| map.map(src))
 }
 
-pub fn compute_lowest_location(reader: impl BufRead) -> u32 {
+pub fn parse_seeds_and_construct_maps(reader: impl BufRead) -> (Vec<u32>, Vec<Map>) {
     let mut lines = reader.lines();
     let seeds_str = lines
         .next()
@@ -64,6 +64,11 @@ pub fn compute_lowest_location(reader: impl BufRead) -> u32 {
         maps.push(Map::from_unsorted_rules(rules));
     }
 
+    (seeds, maps)
+}
+
+pub fn compute_lowest_location(reader: impl BufRead) -> u32 {
+    let (seeds, maps) = parse_seeds_and_construct_maps(reader);
     seeds
         .into_iter()
         .map(|seed| compute_loc(&maps, seed))
