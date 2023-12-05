@@ -76,16 +76,67 @@ pub fn compute_lowest_location(reader: impl BufRead) -> u32 {
         .unwrap()
 }
 
-pub fn compute_lowest_location_seed_range(reader: impl BufRead) -> u32 {
+pub fn compute_lowest_location_seed_range_brute(reader: impl BufRead) -> u32 {
     let (seeds, maps) = parse_seeds_and_construct_maps(reader);
     seeds
         .chunks(2)
         .map(|chnk| {
+            dbg!(chnk);
             (chnk[0]..(chnk[0] + chnk[1]))
-                .map(|seed| compute_loc(&maps, seed))
+                .map(|seed| { compute_loc(&maps, seed) })
                 .min()
                 .unwrap()
         })
         .min()
         .unwrap()
+}
+
+pub fn compute_lowest_location_seed_range_rev(reader: impl BufRead) -> u32 {
+    let mut lines = reader.lines();
+    let seeds_str = lines
+        .next()
+        .expect("missing input")
+        .expect("failed to read line");
+    let seed_info = seeds_str
+        .split_whitespace()
+        .flat_map(|s| s.parse::<u32>())
+        .collect::<Vec<u32>>();
+
+    let mut seed_ranges = seed_info.chunks(2).collect::<Vec<&[u32]>>();
+    seed_ranges.sort_by_key(|seed| seed[0]);
+
+    lines.next();
+    let mut maps = Vec::new();
+    while let Some(_) = lines.next() {
+        let mut rules = Vec::new();
+        while let Some(line) = lines.next() {
+            let line = line.expect("failed to read line");
+            if line == "" {
+                break;
+            }
+            let rule_vals = line
+                .split_whitespace()
+                .flat_map(|s| s.parse::<u32>())
+                .collect::<Vec<u32>>();
+            rules.push(MapRule {
+                // src and dst are reversed!
+                src_start: rule_vals[0],
+                dst_start: rule_vals[1],
+                range: rule_vals[2],
+            });
+        }
+        maps.push(Map::from_unsorted_rules(rules));
+    }
+
+    for i in 0..u32::MAX {
+        let start = maps.iter().rev().fold(i, |dst, map| map.map(dst));
+        let valid = match seed_ranges.binary_search_by_key(&start, |s| s[0]) {
+            Ok(_) => true,
+            Err(i) => i != 0 && start <= seed_ranges[i - 1][0] + seed_ranges[i - 1][1] - 1,
+        };
+        if valid {
+            return i;
+        }
+    }
+    u32::MAX
 }
